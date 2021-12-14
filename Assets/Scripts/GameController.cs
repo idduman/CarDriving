@@ -5,46 +5,82 @@ using UnityEngine;
 
 public class GameController : SingletonBehaviour<GameController>
 {
+    [SerializeField] private CarController _playerCar;
     [SerializeField] private LevelController _levelController;
-    [SerializeField] private CarBehaviour _car;
     
+    public LevelBehaviour CurrentLevel { get; private set; }
+    
+    public int CurrentCar { get; private set; }
+
     public int PlayerLevel { get; private set; }
     void Start()
     {
         PlayerLevel = PlayerPrefs.GetInt("Level", 0);
+        CurrentCar = 0;
         Load();
     }
 
     public void Load()
     {
+        CurrentCar = 0;
         _levelController.Load(PlayerLevel);
     }
 
-    public void OnLevelLoaded()
+    public void OnLevelLoaded(LevelBehaviour level)
     {
-        _car = _levelController.CurrentLevel.GetCar();
-        if (!_car)
+        if (!_playerCar)
         {
             Debug.LogError("No car found in level");
             return;
         }
+
+        CurrentLevel = level;
+        _playerCar.ResetCar(CurrentCar);
+    }
+
+    public void OnCarDriven(bool success)
+    {
+        if (success)
+        {
+            CurrentCar++;
+            if (CurrentCar >= CurrentLevel.GetCarCount())
+            {
+                Finish(true);
+                return;
+            }
+        }
         
-        _car.OnLevelLoaded();
+        _playerCar.ResetCar(CurrentCar);
+    }
+
+    public void OnCheckpointReached()
+    {
+        
     }
 
     public void TurnLeft(bool pressed)
     {
-        if (!_car)
+        if (!_playerCar)
             return;
         
-        _car.TurnLeft(pressed);
+        _playerCar.TurnLeft(pressed);
     }
     
     public void TurnRight(bool pressed)
     {
-        if (!_car)
+        if (!_playerCar)
             return;
         
-        _car.TurnRight(pressed);
+        _playerCar.TurnRight(pressed);
+    }
+
+    private void Finish(bool success)
+    {
+        Debug.Log("Finished");
+        if (success)
+        {
+            PlayerLevel++;
+        }
+        Load();
     }
 }

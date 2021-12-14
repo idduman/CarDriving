@@ -30,6 +30,6 @@ public class LevelController : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
         
-        GameController.Instance.OnLevelLoaded();
+        GameController.Instance.OnLevelLoaded(CurrentLevel);
     }
 }

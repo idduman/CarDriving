@@ -3,19 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CarBehaviour : MonoBehaviour
+public class CarController : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float turnSpeed = 60f;
-    // Start is called before the first frame update
-    private bool _started, _finished, _moving, _turningLeft, _turningRight;
-    
-    void Start()
-    {
-        
-    }
+    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private float turnSpeed = 90f;
 
-    // Update is called once per frame
+    private bool _started, _finished, _moving, _turningLeft, _turningRight;
+
+    private CarData _currentCarData;
+    
     void Update()
     {
         if(!_started || _finished)
@@ -44,13 +40,25 @@ public class CarBehaviour : MonoBehaviour
     {
         if (other.collider.CompareTag("Obstacle"))
         {
-            _finished = true;
+            _started = false;
+            GameController.Instance.OnCarDriven(false);
         }
-            
+        else if (other.collider.CompareTag("Checkpoint"))
+        {
+            GameController.Instance.OnCarDriven(other.transform == _currentCarData.EndPoint);
+        }
     }
 
-    public void OnLevelLoaded()
+    public void ResetCar(int index)
     {
+        _currentCarData = GameController.Instance.CurrentLevel.GetCarData(index);
+        
+        if (_currentCarData == null || !_currentCarData.StartPoint)
+            return;
+        
+        transform.position = _currentCarData.StartPoint.position;
+        transform.rotation = _currentCarData.StartPoint.rotation;
+        
         _started = true;
         _moving = false;
     }
