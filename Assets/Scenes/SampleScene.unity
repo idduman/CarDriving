@@ -250,8 +250,8 @@ MonoBehaviour:
   _playerCar: {fileID: 1775945129}
   _levelController: {fileID: 529225357}
   _replayCarPrefab: {fileID: 696329245409507341, guid: bb41224961cec934ea42464634f36007, type: 3}
-  _carMovespeed: 4
-  _carTurnspeed: 100
+  _carMovespeed: 5
+  _carTurnspeed: 120
   _arrowStart: {fileID: 1740261013}
   _arrowEnd: {fileID: 1753351770}
 --- !u!1 &705507993
