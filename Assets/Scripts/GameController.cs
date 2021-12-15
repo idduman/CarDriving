@@ -119,17 +119,14 @@ namespace CarDriving
             {
                 PlayerLevel++;
             }
-
+            
+            DestroyReplayCars();
             StartCoroutine(FinishRoutine(success));
         }
 
         private void InitializeReplayCars()
         {
-            foreach (var car in _currentReplayCars)
-            {
-                Destroy(car.gameObject);
-            }
-            _currentReplayCars.Clear();
+            DestroyReplayCars();
             
             for (int i = 0; i < _currentSteeringData.Count; i++)
             {
@@ -137,6 +134,15 @@ namespace CarDriving
                 car.Initialize(CurrentLevel.GetCarData(i), _currentSteeringData[i]);
                 _currentReplayCars.Add(car);
             }
+        }
+
+        private void DestroyReplayCars()
+        {
+            foreach (var car in _currentReplayCars)
+            {
+                Destroy(car.gameObject);
+            }
+            _currentReplayCars.Clear();
         }
 
         private void InitializeArrows()
