@@ -48,6 +48,9 @@ namespace CarDriving
 
         private void OnCollisionEnter(Collision other)
         {
+            if (!_started || _finished)
+                return;
+            
             if (other.collider.CompareTag("Obstacle"))
             {
                 _started = false;
@@ -55,6 +58,7 @@ namespace CarDriving
             }
             else if (other.collider.CompareTag("Checkpoint"))
             {
+                _started = false;
                 SteeringData.Add(new Tuple<float, TurnDirection>(_timeStamp, TurnDirection.Stop));
                 GameController.Instance.OnCarDriven(other.transform == _currentCarData.EndPoint);
             }
