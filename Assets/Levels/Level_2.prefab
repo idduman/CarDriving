@@ -937,7 +937,7 @@ MonoBehaviour:
   - StartPoint: {fileID: 8124246234942052569}
     EndPoint: {fileID: 5153301232939112337}
   - StartPoint: {fileID: 7486971227074100801}
-    EndPoint: {fileID: 8124246234942052569}
+    EndPoint: {fileID: 6502159292968853786}
 --- !u!1 &4901214968734757930
 GameObject:
   m_ObjectHideFlags: 0
