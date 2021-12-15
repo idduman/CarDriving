@@ -2,34 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelController : MonoBehaviour
+namespace CarDriving
 {
-    [SerializeField] private List<LevelBehaviour> levels;
-    
-    public LevelBehaviour CurrentLevel { get; private set; }
-
-    public void Load(int index)
+    public class LevelController : MonoBehaviour
     {
-        if (levels.Count < 1)
+        [SerializeField] private List<LevelBehaviour> levels;
+    
+        public LevelBehaviour CurrentLevel { get; private set; }
+
+        public void Load(int index)
         {
-            Debug.LogError("No levels specified");
-            return;
+            if (levels.Count < 1)
+            {
+                Debug.LogError("No levels specified");
+                return;
+            }
+
+            StartCoroutine(LoadRoutine(index % levels.Count));
         }
 
-        StartCoroutine(LoadRoutine(index % levels.Count));
-    }
+        private IEnumerator LoadRoutine(int modIndex)
+        {
+            if(CurrentLevel)
+                Destroy(CurrentLevel.gameObject);
 
-    private IEnumerator LoadRoutine(int modIndex)
-    {
-        if(CurrentLevel)
-            Destroy(CurrentLevel.gameObject);
+            yield return new WaitForEndOfFrame();
 
-        yield return new WaitForEndOfFrame();
+            CurrentLevel = Instantiate(levels[modIndex]);
 
-        CurrentLevel = Instantiate(levels[modIndex]);
-
-        yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
         
-        GameController.Instance.OnLevelLoaded(CurrentLevel);
+            GameController.Instance.OnLevelLoaded(CurrentLevel);
+        }
     }
 }
+

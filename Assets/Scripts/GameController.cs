@@ -1,86 +1,143 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using CarDriving;
 using UnityEngine;
+using UnityEngine.XR;
 
-public class GameController : SingletonBehaviour<GameController>
+namespace CarDriving
 {
-    [SerializeField] private CarController _playerCar;
-    [SerializeField] private LevelController _levelController;
-    
-    public LevelBehaviour CurrentLevel { get; private set; }
-    
-    public int CurrentCar { get; private set; }
 
-    public int PlayerLevel { get; private set; }
-    void Start()
+    public class GameController : SingletonBehaviour<GameController>
     {
-        PlayerLevel = PlayerPrefs.GetInt("Level", 0);
-        CurrentCar = 0;
-        Load();
-    }
+        [SerializeField] private CarController _playerCar;
+        [SerializeField] private LevelController _levelController;
+        [SerializeField] private ReplayCarBehaviour _replayCarPrefab;
+        [SerializeField] private float _carMovespeed;
+        [SerializeField] private float _carTurnspeed;
 
-    public void Load()
-    {
-        CurrentCar = 0;
-        _levelController.Load(PlayerLevel);
-    }
+        private List<SteeringData> _currentSteeringData = new List<SteeringData>();
+        private List<ReplayCarBehaviour> _currentReplayCars = new List<ReplayCarBehaviour>();
 
-    public void OnLevelLoaded(LevelBehaviour level)
-    {
-        if (!_playerCar)
+        private bool _driving;
+
+        public LevelBehaviour CurrentLevel { get; private set; }
+
+        public int CurrentCar { get; private set; }
+
+        public int PlayerLevel { get; private set; }
+
+        public float CarMovespeed => _carMovespeed;
+
+        public float CarTurnspeed => _carTurnspeed;
+
+        void Start()
         {
-            Debug.LogError("No car found in level");
-            return;
+            PlayerLevel = PlayerPrefs.GetInt("Level", 0);
+            CurrentCar = 0;
+            Load();
         }
 
-        CurrentLevel = level;
-        _playerCar.ResetCar(CurrentCar);
-    }
-
-    public void OnCarDriven(bool success)
-    {
-        if (success)
+        private void Update()
         {
-            CurrentCar++;
-            if (CurrentCar >= CurrentLevel.GetCarCount())
+            if (Input.GetMouseButtonDown(0))
             {
-                Finish(true);
-                return;
+                _playerCar.Drive();
+                DriveReplayCars();
             }
         }
-        
-        _playerCar.ResetCar(CurrentCar);
-    }
 
-    public void OnCheckpointReached()
-    {
-        
-    }
-
-    public void TurnLeft(bool pressed)
-    {
-        if (!_playerCar)
-            return;
-        
-        _playerCar.TurnLeft(pressed);
-    }
-    
-    public void TurnRight(bool pressed)
-    {
-        if (!_playerCar)
-            return;
-        
-        _playerCar.TurnRight(pressed);
-    }
-
-    private void Finish(bool success)
-    {
-        Debug.Log("Finished");
-        if (success)
+        public void Load()
         {
-            PlayerLevel++;
+            CurrentCar = 0;
+            _levelController.Load(PlayerLevel);
         }
-        Load();
+
+        public void OnLevelLoaded(LevelBehaviour level)
+        {
+            if (!_playerCar)
+            {
+                Debug.LogError("No car found in level");
+                return;
+            }
+
+            CurrentLevel = level;
+            _currentSteeringData.Clear();
+            _playerCar.ResetCar(CurrentCar);
+            _driving = false;
+        }
+
+        public void OnCarDriven(bool success)
+        {
+            if (success)
+            {
+                CurrentCar++;
+                if (CurrentCar >= CurrentLevel.GetCarCount())
+                {
+                    Finish(true);
+                    return;
+                }
+                _currentSteeringData.Add(_playerCar.SteeringData);
+            }
+            InitializeReplayCars();
+            _playerCar.ResetCar(CurrentCar);
+        }
+
+        public void DriveReplayCars()
+        {
+            foreach (var rCar in _currentReplayCars)
+            {
+                rCar.Drive();
+            }
+        }
+
+        public void TurnLeft(bool pressed)
+        {
+            if (!_playerCar)
+                return;
+
+            _playerCar.TurnLeft(pressed);
+        }
+
+        public void TurnRight(bool pressed)
+        {
+            if (!_playerCar)
+                return;
+
+            _playerCar.TurnRight(pressed);
+        }
+
+        private void Finish(bool success)
+        {
+            Debug.Log("Finished");
+            if (success)
+            {
+                PlayerLevel++;
+            }
+
+            StartCoroutine(FinishRoutine(success));
+        }
+
+        private void InitializeReplayCars()
+        {
+            foreach (var car in _currentReplayCars)
+            {
+                Destroy(car.gameObject);
+            }
+            _currentReplayCars.Clear();
+            
+            for (int i = 0; i < _currentSteeringData.Count; i++)
+            {
+                var car = Instantiate(_replayCarPrefab);
+                car.Initialize(CurrentLevel.GetCarData(i), _currentSteeringData[i]);
+                _currentReplayCars.Add(car);
+            }
+        }
+
+        private IEnumerator FinishRoutine(bool success)
+        {
+            yield return new WaitForEndOfFrame();
+            Load();
+        }
     }
 }

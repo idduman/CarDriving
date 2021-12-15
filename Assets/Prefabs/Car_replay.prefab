@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4569725447577948929}
   - component: {fileID: 7785830304894586027}
-  - component: {fileID: 9161121875591698502}
+  - component: {fileID: 696329245409507341}
   m_Layer: 0
   m_Name: Car_replay
   m_TagString: Untagged
@@ -50,7 +50,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &9161121875591698502
+--- !u!114 &696329245409507341
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,11 +59,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 801197432702662693}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff69175b8c7c76647b8325139d6da9b0, type: 3}
+  m_Script: {fileID: 11500000, guid: 14eff971ac87e704e968d20e80ca4478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
-  turnSpeed: 90
 --- !u!1 &4311946233793871218
 GameObject:
   m_ObjectHideFlags: 0

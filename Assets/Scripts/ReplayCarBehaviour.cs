@@ -1,46 +1,68 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using CarDriving;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ReplayCarBehaviour : MonoBehaviour
 {
-    private CinemachinePath _path;
-    private float _duration;
-
+    private SteeringData _steeringData;
+    private TurnDirection _direction;
+    private float _moveSpeed, _turnSpeed, _timeStamp;
     private bool _driving;
-    private float _currentPos, _speed;
-    
-    // Start is called before the first frame update
-    void Start()
+
+    private Tuple<float, TurnDirection> _nextTurn;
+
+    private void Awake()
     {
         _driving = false;
+        _moveSpeed = GameController.Instance.CarMovespeed;
+        _turnSpeed = GameController.Instance.CarTurnspeed;
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
-        if (!_driving)
+        if (!_driving || _direction == TurnDirection.Stop)
             return;
         
-        _currentPos += _speed * Time.deltaTime;
-        
-        transform.position = _path.EvaluatePosition(_currentPos);
-        transform.rotation = Quaternion.Euler(_path.EvaluateTangent(_currentPos));
+        _timeStamp += Time.deltaTime;
+
+        if (_nextTurn != null && _timeStamp >= _nextTurn.Item1)
+        {
+            _direction = _nextTurn.Item2;
+            _nextTurn = _steeringData.GetNext(_timeStamp);
+        }
+
+        if (_direction == TurnDirection.Left)
+            transform.Rotate(Vector3.up, -_turnSpeed * Time.deltaTime);
+
+        if (_direction == TurnDirection.Right)
+            transform.Rotate(Vector3.up, _turnSpeed * Time.deltaTime);
+
+        transform.Translate(_moveSpeed * Time.deltaTime * Vector3.forward);
     }
 
-    public void Initialize(CinemachinePath path, float duration)
+    public void Initialize(CarData carData, SteeringData steeringData)
     {
-        _path = path;
-        _duration = duration;
+        if (carData == null || steeringData == null)
+            return;
+        
+        _steeringData = steeringData;
+        transform.position = carData.StartPoint.position;
+        transform.rotation = carData.StartPoint.rotation;
+        _timeStamp = 0f;
+        _nextTurn = steeringData.GetNext(_timeStamp);
+        _direction = TurnDirection.Straight;
     }
 
     public void Drive()
     {
-        _currentPos = _path.MinPos;
-        _speed = (_path.MaxPos - _path.MinPos) / _duration;
-        transform.position = _path.EvaluatePosition(_currentPos);
-        transform.rotation = Quaternion.Euler(_path.EvaluateTangent(_currentPos));
+        if (_steeringData == null)
+        {
+            Debug.LogError($"No steering data found in {name}");
+        }
         _driving = true;
     }
 }
