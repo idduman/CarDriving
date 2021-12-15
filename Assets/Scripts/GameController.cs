@@ -8,7 +8,10 @@ using UnityEngine.XR;
 
 namespace CarDriving
 {
-
+    /// <summary>
+    /// Main controller script for the game,
+    /// parameters are given as serialized fields from the editor
+    /// </summary>
     public class GameController : SingletonBehaviour<GameController>
     {
         [SerializeField] private CarController _playerCar;
@@ -24,15 +27,15 @@ namespace CarDriving
 
         private bool _driving;
 
-        public LevelBehaviour CurrentLevel { get; private set; }
+        public LevelBehaviour CurrentLevel { get; private set; } // Reference to the currently loaded level
 
-        public int CurrentCar { get; private set; }
+        public int CurrentCar { get; private set; } // Current player stage number in the level
 
-        public int PlayerLevel { get; private set; }
+        public int PlayerLevel { get; private set; } // Current player level, increments indefinitely but loops in level loader
 
-        public float CarMovespeed => _carMovespeed;
+        public float CarMovespeed => _carMovespeed; // parameter auto method for public access
 
-        public float CarTurnspeed => _carTurnspeed;
+        public float CarTurnspeed => _carTurnspeed; // parameter auto method for public access
 
         void Start()
         {
@@ -50,12 +53,14 @@ namespace CarDriving
             }
         }
 
+        // Method for loading a new or existing level
         public void Load()
         {
             CurrentCar = 0;
             _levelController.Load(PlayerLevel);
         }
 
+        //This method is called whenever the level completes its loading routine
         public void OnLevelLoaded(LevelBehaviour level)
         {
             if (!_playerCar)
@@ -71,6 +76,7 @@ namespace CarDriving
             _driving = false;
         }
 
+        // this method is called whenever player car crashes into something
         public void OnCarDriven(bool success)
         {
             if (success)
@@ -88,6 +94,7 @@ namespace CarDriving
             _playerCar.ResetCar(CurrentCar);
         }
 
+        //Method for starting the movement of all replay cars
         public void DriveReplayCars()
         {
             foreach (var rCar in _currentReplayCars)
@@ -96,6 +103,7 @@ namespace CarDriving
             }
         }
 
+        // Steering event trigger function
         public void TurnLeft(bool pressed)
         {
             if (!_playerCar)
@@ -104,6 +112,7 @@ namespace CarDriving
             _playerCar.TurnLeft(pressed);
         }
 
+        // Steering event trigger function
         public void TurnRight(bool pressed)
         {
             if (!_playerCar)
@@ -112,6 +121,7 @@ namespace CarDriving
             _playerCar.TurnRight(pressed);
         }
 
+        // This method is called on level is completed or failed
         private void Finish(bool success)
         {
             Debug.Log("Finished");
@@ -124,6 +134,7 @@ namespace CarDriving
             StartCoroutine(FinishRoutine(success));
         }
 
+        //This method initializes all replay cars that are present in current level
         private void InitializeReplayCars()
         {
             DestroyReplayCars();
@@ -136,6 +147,7 @@ namespace CarDriving
             }
         }
 
+        //This method desrtoys all replay cars that are present in current level
         private void DestroyReplayCars()
         {
             foreach (var car in _currentReplayCars)
@@ -145,6 +157,7 @@ namespace CarDriving
             _currentReplayCars.Clear();
         }
 
+        // This method sets the positions and rotations of the indicator arrows relative to the checkpoints
         private void InitializeArrows()
         {
             var carData = CurrentLevel.GetCarData(CurrentCar);
@@ -158,6 +171,7 @@ namespace CarDriving
             _arrowEnd.rotation = rotations.Item2;
         }
 
+        //coroutine for new level load
         private IEnumerator FinishRoutine(bool success)
         {
             yield return new WaitForEndOfFrame();
