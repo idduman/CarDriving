@@ -130,6 +130,8 @@ namespace CarDriving
                 PlayerLevel++;
             }
             
+            PlayerPrefs.SetInt("Level", PlayerLevel);
+            
             DestroyReplayCars();
             StartCoroutine(FinishRoutine(success));
         }
