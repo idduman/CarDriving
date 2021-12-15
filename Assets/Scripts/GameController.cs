@@ -122,7 +122,7 @@ namespace CarDriving
         }
 
         // This method is called on level is completed or failed
-        private void Finish(bool success)
+        public void Finish(bool success)
         {
             Debug.Log("Finished");
             if (success)

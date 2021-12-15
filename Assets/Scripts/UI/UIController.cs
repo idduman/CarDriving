@@ -14,4 +14,9 @@ public class UIController : SingletonBehaviour<UIController>
     {
         GameController.Instance.TurnRight(pressed);
     }
+
+    public void Restart()
+    {
+        GameController.Instance.Finish(false);
+    }
 }

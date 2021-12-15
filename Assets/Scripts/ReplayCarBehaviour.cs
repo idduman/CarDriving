@@ -24,7 +24,7 @@ public class ReplayCarBehaviour : MonoBehaviour
     
     void Update()
     {
-        if (!_driving || _direction == TurnDirection.Stop)
+        if (!_driving)
             return;
         
         _timeStamp += Time.deltaTime;

@@ -886,7 +886,7 @@ GameObject:
   - component: {fileID: 4847008351925095982}
   - component: {fileID: 4847008351925095977}
   m_Layer: 0
-  m_Name: Level_test
+  m_Name: Level_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -923,17 +923,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _carData:
   - StartPoint: {fileID: 5219134271052680834}
-    EndPoint: {fileID: 659264815791476817}
-  - StartPoint: {fileID: 1008887904795809111}
+    EndPoint: {fileID: 1008887904795809111}
+  - StartPoint: {fileID: 659264815791476817}
     EndPoint: {fileID: 8889144951248339921}
-  - StartPoint: {fileID: 1744432084768537801}
-    EndPoint: {fileID: 5153301232939112337}
-  - StartPoint: {fileID: 4563329727452338594}
-    EndPoint: {fileID: 2923110612312218704}
-  - StartPoint: {fileID: 6502159292968853786}
-    EndPoint: {fileID: 8124246234942052569}
-  - StartPoint: {fileID: 7486971227074100801}
+  - StartPoint: {fileID: 8889144951248339921}
+    EndPoint: {fileID: 6502159292968853786}
+  - StartPoint: {fileID: 5153301232939112337}
     EndPoint: {fileID: 5219134271052680834}
+  - StartPoint: {fileID: 2923110612312218704}
+    EndPoint: {fileID: 4563329727452338594}
+  - StartPoint: {fileID: 6502159292968853786}
+    EndPoint: {fileID: 8889144951248339921}
+  - StartPoint: {fileID: 8124246234942052569}
+    EndPoint: {fileID: 5153301232939112337}
+  - StartPoint: {fileID: 7486971227074100801}
+    EndPoint: {fileID: 8124246234942052569}
 --- !u!1 &4901214968734757930
 GameObject:
   m_ObjectHideFlags: 0
