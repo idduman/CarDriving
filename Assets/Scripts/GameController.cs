@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using CarDriving;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -15,6 +16,8 @@ namespace CarDriving
         [SerializeField] private ReplayCarBehaviour _replayCarPrefab;
         [SerializeField] private float _carMovespeed;
         [SerializeField] private float _carTurnspeed;
+        [SerializeField] private Transform _arrowStart;
+        [SerializeField] private Transform _arrowEnd;
 
         private List<SteeringData> _currentSteeringData = new List<SteeringData>();
         private List<ReplayCarBehaviour> _currentReplayCars = new List<ReplayCarBehaviour>();
@@ -63,6 +66,7 @@ namespace CarDriving
 
             CurrentLevel = level;
             _currentSteeringData.Clear();
+            InitializeArrows();
             _playerCar.ResetCar(CurrentCar);
             _driving = false;
         }
@@ -79,6 +83,7 @@ namespace CarDriving
                 }
                 _currentSteeringData.Add(_playerCar.SteeringData);
             }
+            InitializeArrows();
             InitializeReplayCars();
             _playerCar.ResetCar(CurrentCar);
         }
@@ -132,6 +137,19 @@ namespace CarDriving
                 car.Initialize(CurrentLevel.GetCarData(i), _currentSteeringData[i]);
                 _currentReplayCars.Add(car);
             }
+        }
+
+        private void InitializeArrows()
+        {
+            var carData = CurrentLevel.GetCarData(CurrentCar);
+            var positions = carData.GetCheckpointPositions(3f);
+            var rotations = carData.GetCheckpointRotations();
+            
+            _arrowStart.position = new Vector3(positions.Item1.x, _arrowStart.position.y, positions.Item1.z);
+            _arrowEnd.position = new Vector3(positions.Item2.x, _arrowEnd.position.y, positions.Item2.z);
+
+            _arrowStart.rotation = rotations.Item1;
+            _arrowEnd.rotation = rotations.Item2;
         }
 
         private IEnumerator FinishRoutine(bool success)

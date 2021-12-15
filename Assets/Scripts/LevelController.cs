@@ -24,7 +24,7 @@ namespace CarDriving
         private IEnumerator LoadRoutine(int modIndex)
         {
             if(CurrentLevel)
-                Destroy(CurrentLevel.gameObject);
+                DestroyImmediate(CurrentLevel.gameObject);
 
             yield return new WaitForEndOfFrame();
 
