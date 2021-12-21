@@ -22,12 +22,12 @@ public class ReplayCarBehaviour : MonoBehaviour
         _turnSpeed = GameController.Instance.CarTurnspeed;
     }
     
-    void Update()
+    void FixedUpdate()
     {
         if (!_driving)
             return;
         
-        _timeStamp += Time.deltaTime;
+        _timeStamp += Time.fixedDeltaTime;
 
         if (_nextTurn != null && _timeStamp >= _nextTurn.Item1)
         {
@@ -36,12 +36,12 @@ public class ReplayCarBehaviour : MonoBehaviour
         }
 
         if (_direction == TurnDirection.Left)
-            transform.Rotate(Vector3.up, -_turnSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.up, -_turnSpeed * Time.fixedDeltaTime);
 
         if (_direction == TurnDirection.Right)
-            transform.Rotate(Vector3.up, _turnSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.up, _turnSpeed * Time.fixedDeltaTime);
 
-        transform.Translate(_moveSpeed * Time.deltaTime * Vector3.forward);
+        transform.Translate(_moveSpeed * Time.fixedDeltaTime * Vector3.forward);
     }
 
     public void Initialize(CarData carData, SteeringData steeringData)

@@ -27,22 +27,22 @@ namespace CarDriving
             _turnSpeed = GameController.Instance.CarTurnspeed;
         }
 
-        void Update()
+        void FixedUpdate()
         {
             if (!_started || _finished)
                 return;
 
             if (_moving)
             {
-                _timeStamp += Time.deltaTime;
+                _timeStamp += Time.fixedDeltaTime;
                 
                 if (_direction == TurnDirection.Left)
-                    transform.Rotate(Vector3.up, -_turnSpeed * Time.deltaTime);
+                    transform.Rotate(Vector3.up, -_turnSpeed * Time.fixedDeltaTime);
 
                 if (_direction == TurnDirection.Right)
-                    transform.Rotate(Vector3.up, _turnSpeed * Time.deltaTime);
+                    transform.Rotate(Vector3.up, _turnSpeed * Time.fixedDeltaTime);
 
-                transform.Translate(_moveSpeed * Time.deltaTime * Vector3.forward);
+                transform.Translate(_moveSpeed * Time.fixedDeltaTime * Vector3.forward);
             }
         }
 
